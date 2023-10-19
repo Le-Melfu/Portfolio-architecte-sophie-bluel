@@ -1,13 +1,15 @@
 //Récupération des données de l'API
 fetch("http://localhost:5678/api/works")
+//Conversion de la réponse de l'API en JSON
 .then(response => {
     return response.json()
 })
-//Génération du contenu de la page
+//Stockage de la réponse dans la variable allWorksList
 .then(result => {
     const allWorksList = result;
     return allWorksList
 })
+
 //Génération des boutons de filtres
 .then((allWorksList) => {
     // Fonction de génération de contenu
@@ -55,6 +57,7 @@ fetch("http://localhost:5678/api/works")
         });
         filterBar.appendChild(filterBtn)
     });
+
     //Fonction du click des boutons de filtre
     function OnClickfilter(categorie){
         allFiltersBtn = document.querySelectorAll(".filter-btn");
