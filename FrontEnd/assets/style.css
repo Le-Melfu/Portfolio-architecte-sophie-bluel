@@ -48,6 +48,9 @@ table {
 }
 /** end reset css**/
 body {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
 	max-width: 1140px;
 	margin:auto;
 	font-family: 'Work Sans' ;
@@ -57,6 +60,9 @@ header {
 	display: flex;
 	justify-content: space-between;
 	margin: 50px 0
+}
+main{
+	flex-grow: 1;
 }
 section {
 	margin: 50px 0
@@ -88,13 +94,18 @@ nav ul {
 	display: flex;
 	align-items: center;
 	list-style-type: none;
-
 }
 nav li {
 	padding: 0 10px;
 	font-size: 1.2em;
 }
-
+nav a {
+	text-decoration: none;
+	color: #000;
+}
+.login-page--active{
+	font-weight: bold;
+}
 li:hover {
 	color: #B1663C;
 }
@@ -146,7 +157,6 @@ li:hover {
 	color: white;
 	background-color: #1D6154;
 }
-
 .gallery {
 	width: 100%;
 	display: grid;
@@ -154,10 +164,56 @@ li:hover {
 	grid-column-gap: 20px;
 	grid-row-gap: 20px;
 }
-
 .gallery img {
 	width: 100%;
 
+}
+.login-block {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+.login-block h1 {
+	margin-bottom: 60px;
+	font-size: 30px;
+	font-style: normal;
+	color: #1D6154;
+	font-weight: 700;
+}
+.login-block form {
+	display: flex;
+	flex-direction: column;
+}
+.login-block form label {
+	color: #3D3D3D;
+	font-family: Work Sans;
+	font-size: 14px;
+	font-weight: bold;
+	margin-bottom: 7px;
+}
+.login-block form input {
+	width: 379px;
+	height: 50px;
+	margin-bottom: 30px;
+	background: #FFF;
+	border: none;
+	box-shadow: 0px 4px 14px 0px rgba(0, 0, 0, 0.09);
+}
+.login-block form button {
+	align-self: center;
+	width: 179px;
+	height: 36px;
+	color: #FFF;
+	font-size: 14px;
+	border: none;
+	border-radius: 60px;
+	background: #1D6154;
+	margin-bottom: 28px;
+}
+.login-block a {
+	text-decoration: underline;
+	color: #1D6154;
 }
 #contact {
 	width: 50%;
@@ -176,7 +232,6 @@ margin: auto;
 	display: flex;
 	flex-direction: column;
 }
-
 #contact input {
 	height: 50px;
 	font-size: 1.2em;
@@ -201,7 +256,6 @@ input[type="submit"]{
 	text-align: center;
 	border-radius: 60px ;
 }
-
 footer nav ul {
 	display: flex;
 	justify-content: flex-end;

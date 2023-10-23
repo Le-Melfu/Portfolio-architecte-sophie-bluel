@@ -6,7 +6,9 @@ fetch("http://localhost:5678/api/works")
 })
 //Stockage de la réponse dans la variable allWorksList
 .then(result => {
-    const allWorksList = result;
+    const storedAllWorksList = result;
+    localStorage.setItem("storedAllWorksList", JSON.stringify(storedAllWorksList));
+    const allWorksList = JSON.parse(localStorage.getItem("storedAllWorksList"));
     return allWorksList
 })
 
@@ -30,13 +32,10 @@ fetch("http://localhost:5678/api/works")
     generateGalleryContent(allWorksList);
 
     //Récupération des Catégories
-    const categoriesList = allWorksList.map(allWorksList => allWorksList.category.name);
-    let setCategoriesList = new Set(categoriesList);
+    let setCategoriesList = new Set(allWorksList.map(allWorksList => allWorksList.category.name));
     
-    
-
-    let filterBar = document.querySelector(".filters");
     //Création du bouton filtre "Tous"
+    let filterBar = document.querySelector(".filters"); 
     let filterBtnAll = document.createElement("button");
     filterBtnAll.innerText = "Tous";
     filterBtnAll.classList.add("filter-btn", "filter-btn-active");
