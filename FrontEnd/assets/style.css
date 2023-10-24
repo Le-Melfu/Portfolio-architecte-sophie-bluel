@@ -193,9 +193,11 @@ li:hover {
 	margin-bottom: 7px;
 }
 .login-block form input {
-	width: 379px;
-	height: 50px;
+	width: 369px;
+	height: 40px;
+	padding: 10px 20px;
 	margin-bottom: 30px;
+	font-size: 14px;
 	background: #FFF;
 	border: none;
 	box-shadow: 0px 4px 14px 0px rgba(0, 0, 0, 0.09);

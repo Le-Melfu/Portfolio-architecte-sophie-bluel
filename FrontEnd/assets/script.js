@@ -1,14 +1,14 @@
 //Récupération des données de l'API
 fetch("http://localhost:5678/api/works")
+
 //Conversion de la réponse de l'API en JSON
 .then(response => {
     return response.json()
 })
+
 //Stockage de la réponse dans la variable allWorksList
 .then(result => {
-    const storedAllWorksList = result;
-    localStorage.setItem("storedAllWorksList", JSON.stringify(storedAllWorksList));
-    const allWorksList = JSON.parse(localStorage.getItem("storedAllWorksList"));
+    const allWorksList = result;
     return allWorksList
 })
 
@@ -26,24 +26,24 @@ fetch("http://localhost:5678/api/works")
             let figCaption = document.createElement("figcaption");
             figCaption.innerHTML = content[i].title;
             fig.append(figImg, figCaption);
-            gallery.appendChild(fig);
+            gallery.appendChild(fig)
         };
     };
     generateGalleryContent(allWorksList);
 
-    //Récupération des Catégories
-    let setCategoriesList = new Set(allWorksList.map(allWorksList => allWorksList.category.name));
-    
     //Création du bouton filtre "Tous"
     let filterBar = document.querySelector(".filters"); 
     let filterBtnAll = document.createElement("button");
     filterBtnAll.innerText = "Tous";
     filterBtnAll.classList.add("filter-btn", "filter-btn-active");
     filterBtnAll.addEventListener("click", () =>{
-        OnClickfilter("Tous")
+        OnClickfilter("Tous");
         filterBtnAll.classList.add("filter-btn-active")
     });
     filterBar.appendChild(filterBtnAll);
+
+    //Récupération des Catégories
+    let setCategoriesList = new Set(allWorksList.map(allWorksList => allWorksList.category.name));
 
     //Création des boutons par Catégories
     setCategoriesList.forEach((categorie) => {
@@ -72,4 +72,8 @@ fetch("http://localhost:5678/api/works")
             generateGalleryContent(filteredWorks)
         }
     }
+})
+.catch((error) => {
+    console.log("Une erreur est survenu")
 });
+
