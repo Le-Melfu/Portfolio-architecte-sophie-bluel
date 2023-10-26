@@ -134,7 +134,18 @@ li:hover {
 }
 #portfolio h2 {
 	text-align: center;
+	margin-right: 20px;
+}
+.portfolio__header{
+	display: flex;
+	justify-content: center;
+	align-items: center;
 	margin-bottom: 1em;
+}
+.portfolio__header p{
+	cursor: pointer;
+	font-weight: 700;
+	font-size: 14px;
 }
 .filters{
 	display: flex;
@@ -211,11 +222,19 @@ li:hover {
 	border: none;
 	border-radius: 60px;
 	background: #1D6154;
+	margin-top: 10px;
 	margin-bottom: 28px;
 }
 .login-block a {
 	text-decoration: underline;
 	color: #1D6154;
+}
+.login-block .err-message{
+	justify-self: center;
+	font-size: 12px;
+	font-weight: bold;
+	color: red;
+	margin-bottom: 10px;
 }
 #contact {
 	width: 50%;
