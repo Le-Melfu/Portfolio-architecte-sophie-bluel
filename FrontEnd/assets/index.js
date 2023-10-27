@@ -51,7 +51,7 @@ fetch("http://localhost:5678/api/works")
         //Récupération des Catégories
         let setCategoriesList = new Set(allWorksList.map(allWorksList => allWorksList.category.name));
 
-        // Si le token existe
+        // Vérification du token
         if (window.localStorage.getItem("token") != undefined) {
             // Modification du bouton Login en Logout
             const logInBtn = document.querySelector(".login-link");
@@ -91,11 +91,13 @@ fetch("http://localhost:5678/api/works")
                 let editImg = document.createElement("img");
                 let deleteBtn = document.createElement("button");
                 deleteBtn.classList.add("delete-btn")
-                deleteBtn.innerHTML = `<i class="fa-solid fa-trash"></i>`
+                deleteBtn.innerHTML = `<i class="fa-solid fa-trash-can" style="color: #ffffff;"></i>`
                 editImg.src = image;
                 editWork.append(editImg, deleteBtn);
                 galleryEdit.appendChild(editWork)
-            })
+            });
+            // Bouton d'envoi vers le formulaire d'ajout d'image
+
         } else {
             //Création du bouton filtre "Tous"
             let filterBtnAll = document.createElement("button");

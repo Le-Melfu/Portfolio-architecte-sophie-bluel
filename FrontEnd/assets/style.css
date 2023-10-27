@@ -211,8 +211,8 @@ section {
 	position: absolute;
 	top: 40px;
 	right: 40px;
-	height: 24px;
-	width: 24px;
+	height: 20px;
+	width: 20px;
 	cursor: pointer;
 }
 
@@ -244,11 +244,23 @@ section {
 
 .modal-wrapper-edit .edit-gallery .delete-btn {
 	position: absolute;
+	cursor: pointer;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	background-color: black;
+	width: 14px;
+	height: 14px;
+	font-size: 11px;
+	border-radius: 2px;
 	top: 5px;
-	right: -5px;
+	right: 5px;
+	padding: 4px;
+	margin: 0;
 }
 
 .modal-wrapper-edit button {
+	cursor: pointer;
 	margin-top: 38px;
 	width: 50%;
 	height: 36px;
