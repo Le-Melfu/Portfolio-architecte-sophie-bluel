@@ -178,36 +178,42 @@ section {
 	background-color: rgba(0, 0, 0, 0.3);
 }
 
-.modal-wrapper-edit {
+.modal-wrapper {
 	z-index: 1;
+	width: 630px;
+	height: 688px;
+	padding: 45px;
+	background-color: #FFF;
+	border-radius: 60px;
+	animation-name: animOpenModal;
+	animation-duration: 300ms;
+	animation-fill-mode: both;
+	overflow: hidden;
+}
+
+@keyframes animOpenModal {
+	from {
+		transform: translateX(200vw);
+		opacity: 0;
+	}
+
+	to {
+		transform: translateX(0);
+		opacity: 100;
+	}
+}
+
+.modal-wrapper-edit {
 	position: relative;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
 	align-items: center;
-	width: 630px;
-	height: 688px;
-	padding: 45px;
-	background-color: white;
-	border-radius: 60px;
-	animation-name: animModal;
-	animation-duration: 200ms;
-	animation-fill-mode: both;
+	height: inherit;
 }
 
-@keyframes animModal {
-	from {
-		transform: translateY(-200vh);
-		opacity: 0;
-	}
-
-	to {
-		transform: translateY(0);
-		opacity: 100;
-	}
-}
-
-.modal-wrapper-edit .exit-cross {
+.modal-wrapper .exit-cross {
+	z-index: 2;
 	position: absolute;
 	top: 40px;
 	right: 40px;
@@ -216,11 +222,28 @@ section {
 	cursor: pointer;
 }
 
-.modal-wrapper-edit h3 {
+.modal-wrapper h3 {
 	font-family: Work Sans;
 	font-size: 26px;
 	margin: 46px 0;
 }
+
+.modal-wrapper-edit[display=null] {
+	animation-name: modalSlideLeft;
+	animation-duration: 300ms;
+	animation-fill-mode: both;
+}
+
+@keyframes modalSlideLeft {
+	from {
+		transform: translateX(0);
+	}
+
+	to {
+		transform: translateX(-200vw);
+	}
+}
+
 
 .modal-wrapper-edit .edit-gallery {
 	border-bottom: 1px solid #B3B3B3;
@@ -259,7 +282,7 @@ section {
 	margin: 0;
 }
 
-.modal-wrapper-edit button {
+.modal-wrapper .modal-btn {
 	cursor: pointer;
 	margin-top: 38px;
 	width: 50%;
@@ -271,6 +294,111 @@ section {
 	font-family: Syne;
 	font-size: 14px;
 	font-weight: 700;
+}
+
+.modal-wrapper-form {
+	position: relative;
+	height: inherit;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	animation-name: animOpenModal;
+	animation-duration: 300ms;
+	animation-fill-mode: both;
+}
+
+.modal-wrapper-form[display=null] {
+	animation-name: modalSlideRight;
+	animation-duration: 300ms;
+	animation-fill-mode: both;
+}
+
+@keyframes modalSlideRight {
+	from {
+		transform: translateX(0);
+	}
+
+	to {
+		transform: translateX(200vw);
+	}
+}
+
+.modal-wrapper-form form {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: column;
+	border-bottom: 1px solid #B3B3B3;
+}
+
+.modal-wrapper-form label {
+	box-sizing: border-box;
+	color: #3D3D3D;
+	font-family: Work Sans;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: normal;
+	margin-top: 21px;
+}
+
+.modal-wrapper-form .pic-btn {
+	padding: 10px 33px;
+	align-self: center;
+	border-radius: 50px;
+	background: #CBD6DC;
+	font-family: Work Sans;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 500;
+	color: #306685;
+	text-align: center;
+	align-self: center;
+	margin-bottom: 7px;
+}
+
+.modal-wrapper-form input:not([type="file"]),
+select {
+	width: 420px;
+	height: 51px;
+	margin-top: 10px;
+	padding: 10px;
+	border: none;
+	background: #FFF;
+	box-shadow: 0px 4px 14px 0px rgba(0, 0, 0, 0.09);
+	color: #444;
+	font-family: Work Sans;
+	font-size: 14px;
+	font-style: normal;
+	font-weight: 400;
+}
+
+.picture-add-block {
+	height: 169px;
+	width: 420px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	background-color: #E8F1F6;
+	border-radius: 10px;
+	padding: 10px;
+	margin-top: 36px;
+	margin-bottom: 30px;
+}
+
+.modal-wrapper-form .arrow-left {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 21px;
+	width: 21px;
+	cursor: pointer;
+}
+
+.picture-add-block svg {
+	width: 76px;
+	height: 76px;
+	fill: #B9C5CC;
 }
 
 h1 {

@@ -5,8 +5,9 @@ let modal = document.querySelector(".modal")
 function stopPropagation(e) {
     e.stopPropagation
 }
-function openModal(e) {
-    modal.style.display = null
+function openModal(modale) {
+    modal.style.display = null;
+    modale.style.display = null
 }
 function closeModal(e) {
     modal.style.display = "none"
@@ -69,19 +70,22 @@ fetch("http://localhost:5678/api/works")
             portfolioHeader.appendChild(modifyWorksBtn)
 
             //Ouverture et Fermeture de la modale
+            let modalWrapperEdit = document.querySelector(".modal-wrapper-edit");
+            let modalWrapperForm = document.querySelector(".modal-wrapper-form");
             modifyWorksBtn.addEventListener("click", () => {
-                openModal()
+                openModal(modalWrapperEdit)
             });
 
             const exitCross = document.querySelector(".exit-cross");
             const exitModal = document.querySelector(".modal-bg");
             exitCross.addEventListener("click", () => {
                 closeModal()
-            })
-            exitModal.addEventListener("click", () => {
+            });
+            exitCross.addEventListener("click", () => {
                 closeModal()
-            })
+            });
             exitModal.addEventListener("click", stopPropagation);
+
             //Contenu de la modale
             let galleryContent = allWorksList.map(allWorksList => allWorksList.imageUrl);
             let galleryEdit = document.querySelector(".modal-wrapper-edit .edit-gallery");
@@ -90,13 +94,42 @@ fetch("http://localhost:5678/api/works")
                 editWork.classList.add("work-edit");
                 let editImg = document.createElement("img");
                 let deleteBtn = document.createElement("button");
-                deleteBtn.classList.add("delete-btn")
-                deleteBtn.innerHTML = `<i class="fa-solid fa-trash-can" style="color: #ffffff;"></i>`
+                deleteBtn.classList.add("delete-btn");
+                deleteBtn.innerHTML = `<i class="fa-solid fa-trash-can" style="color: #ffffff;"></i>`;
                 editImg.src = image;
                 editWork.append(editImg, deleteBtn);
                 galleryEdit.appendChild(editWork)
             });
             // Bouton d'envoi vers le formulaire d'ajout d'image
+            let addWorkBtn = document.querySelector(".add-work-btn");
+            addWorkBtn.addEventListener("click", () =>{
+                modalWrapperEdit.style.display = "none";
+                modalWrapperForm.style.display = null;
+            });
+            // Flèche de retour à la gallerie d'édition
+            let leftArrow = document.querySelector(".arrow-left");
+            leftArrow.addEventListener("click", () =>{
+                modalWrapperForm.style.display = "none";
+                modalWrapperEdit.style.display = null;
+            });
+            // Fonction du formulaire
+            let categorySelection = document.querySelector("#form-category");
+            setCategoriesList.forEach( (categorie) =>{
+                let option = document.createElement("option");
+                option.value = categorie;
+                option.innerText = categorie;
+                categorySelection.appendChild(option)
+            });
+            const validationBtn = document.querySelector(".validation-btn");
+            const workForm = document.querySelector(".modal-wrapper-form form")
+            
+            workForm.addEventListener("submit", (e) =>{
+                const pictureTitle = document.getElementById("picture-title").value;
+                const category = document.getElementById("form-category").value;
+                
+            })
+
+
 
         } else {
             //Création du bouton filtre "Tous"
