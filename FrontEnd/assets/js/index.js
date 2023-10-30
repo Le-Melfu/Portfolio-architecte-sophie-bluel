@@ -102,32 +102,45 @@ fetch("http://localhost:5678/api/works")
             });
             // Bouton d'envoi vers le formulaire d'ajout d'image
             let addWorkBtn = document.querySelector(".add-work-btn");
-            addWorkBtn.addEventListener("click", () =>{
+            addWorkBtn.addEventListener("click", () => {
                 modalWrapperEdit.style.display = "none";
                 modalWrapperForm.style.display = null;
             });
             // Flèche de retour à la gallerie d'édition
             let leftArrow = document.querySelector(".arrow-left");
-            leftArrow.addEventListener("click", () =>{
+            leftArrow.addEventListener("click", () => {
                 modalWrapperForm.style.display = "none";
                 modalWrapperEdit.style.display = null;
             });
             // Fonction du formulaire
             let categorySelection = document.querySelector("#form-category");
-            setCategoriesList.forEach( (categorie) =>{
+            setCategoriesList.forEach((categorie) => {
                 let option = document.createElement("option");
                 option.value = categorie;
                 option.innerText = categorie;
                 categorySelection.appendChild(option)
             });
-            const validationBtn = document.querySelector(".validation-btn");
-            const workForm = document.querySelector(".modal-wrapper-form form")
-            
-            workForm.addEventListener("submit", (e) =>{
-                const pictureTitle = document.getElementById("picture-title").value;
-                const category = document.getElementById("form-category").value;
-                
-            })
+            // const submitBtn = document.querySelector(".modal-wrapper-form button");
+            // const workForm = document.querySelector(".modal-wrapper-form form");
+            const pictureTitle = document.getElementById("picture-title").value;
+            // const category = document.getElementById("form-category").value;
+            const pictureFile = document.getElementById("picture");
+            const preview = document.getElementById("preview");
+            const imagePlaceholder = document.getElementById("img-placeholder");
+            const pictureAddBlock = document.querySelector(".picture-add-block");
+            pictureFile.addEventListener("change", function() {
+                if (pictureFile.files && pictureFile.files[0]) {
+                    
+                    const reader = new FileReader();
+    
+                    reader.onload = function(e) {
+                        preview.src = e.target.result;
+                        preview.style.display = null;
+                    };
+                    pictureAddBlock.removeChild(imagePlaceholder);
+                    reader.readAsDataURL(pictureFile.files[0]);
+                }
+            });
 
 
 

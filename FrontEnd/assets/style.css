@@ -296,6 +296,12 @@ section {
 	font-weight: 700;
 }
 
+.modal-wrapper .disabled {
+	cursor: default;
+	background-color: #A7A7A7;
+	pointer-events: none;
+}
+
 .modal-wrapper-form {
 	position: relative;
 	height: inherit;
@@ -361,7 +367,6 @@ select {
 	width: 420px;
 	height: 51px;
 	margin-top: 10px;
-	padding: 10px;
 	border: none;
 	background: #FFF;
 	box-shadow: 0px 4px 14px 0px rgba(0, 0, 0, 0.09);
@@ -373,7 +378,8 @@ select {
 }
 
 .picture-add-block {
-	height: 169px;
+	position: relative;
+	min-height: 169px;
 	width: 420px;
 	display: flex;
 	flex-direction: column;
@@ -384,6 +390,15 @@ select {
 	padding: 10px;
 	margin-top: 36px;
 	margin-bottom: 30px;
+}
+
+
+.picture-add-block img{
+	display: flex;
+	width: 129px;
+	height: auto;
+	position: relative;
+	top: 0px;
 }
 
 .modal-wrapper-form .arrow-left {
