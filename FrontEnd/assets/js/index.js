@@ -180,7 +180,6 @@ fetch("http://localhost:5678/api/works")
 // Preview de l'image Uploadée
 const filePicture = document.getElementById("picture");
 const filePreview = document.getElementById("preview");
-const fileInput = document.querySelector(".file-input")
 const submitBtn = document.querySelector(".modal-wrapper-form .modal-btn");
 const filePictureReader = new FileReader();
 
@@ -216,5 +215,4 @@ addWorkForm.addEventListener("submit", (e) => {
     //     "categoryId": "string",
     //     "userId": 0
     // }
-    console.log(workToPost)
 });
