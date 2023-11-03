@@ -4,6 +4,7 @@ let filterBar = document.querySelector(".filters");
 let modal = document.querySelector(".modal");
 let modalWrapperEdit = document.querySelector(".modal-wrapper-edit");
 let modalWrapperForm = document.querySelector(".modal-wrapper-form");
+const token =  window.localStorage.getItem("token");
 
 function stopPropagation(e) {
     e.stopPropagation
@@ -39,10 +40,9 @@ fetch("http://localhost:5678/api/works")
     //Génération des boutons de filtres
     .then((allWorksList) => {
         // Fonction de génération de contenu
-
         function generateGalleryContent(content, container) {
             gallery.innerHTML = " ";
-            for (let i = 0; i < content.length; i++) {
+            for(let i = 0; i < content.length; i++){
                 let fig = document.createElement("figure");
                 let figImg = document.createElement("img");
                 figImg.src = content[i].imageUrl;
@@ -53,13 +53,18 @@ fetch("http://localhost:5678/api/works")
                 container.appendChild(fig)
             };
         };
+
         generateGalleryContent(allWorksList, gallery);
 
         //Récupération des Catégories
-        let setCategoriesList = new Set(allWorksList.map(allWorksList => allWorksList.category.name));
-        console.log(setCategoriesList);
+        let setCategoriesList = new Set();
+        allWorksList.forEach(work => {
+            setCategoriesList.add(JSON.stringify(work.category))
+        });
+        const categories = Array.from(setCategoriesList).map(JSON.parse);
+        
         // Vérification du token
-        if (window.localStorage.getItem("token") != undefined) {
+        if (token != undefined) {
             // Modification du bouton Login en Logout
             const logInBtn = document.querySelector(".login-link");
             logInBtn.innerText = "logout";
@@ -81,9 +86,9 @@ fetch("http://localhost:5678/api/works")
             });
 
             //Contenu de la modale
-            let galleryContent = allWorksList.map(allWorksList => allWorksList.imageUrl);
+            let galleryEditContent = allWorksList.map(allWorksList => allWorksList.imageUrl);
             let galleryEdit = document.querySelector(".modal-wrapper-edit .edit-gallery");
-            galleryContent.forEach((image) => {
+            galleryEditContent.forEach((image) => {
                 let editWork = document.createElement("div");
                 editWork.classList.add("work-edit");
                 let editImg = document.createElement("img");
@@ -111,10 +116,10 @@ fetch("http://localhost:5678/api/works")
 
             //Catégories du formulaire
             let categorySelection = document.querySelector("#form-category");
-            setCategoriesList.forEach((categorie) => {
+            categories.forEach((categorie) => {
                 let option = document.createElement("option");
-                option.value = categorie;
-                option.innerText = categorie;
+                option.value = categorie.id;
+                option.innerText = categorie.name;
                 categorySelection.appendChild(option)
             });
 
@@ -141,12 +146,12 @@ fetch("http://localhost:5678/api/works")
             filterBar.appendChild(filterBtnAll);
 
             //Création des boutons par Catégories
-            setCategoriesList.forEach((categorie) => {
+            categories.forEach((categorie) => {
                 let filterBtn = document.createElement("button");
                 filterBtn.classList.add("filter-btn");
-                filterBtn.innerText = categorie;
+                filterBtn.innerText = categorie.name;
                 filterBtn.addEventListener("click", () => {
-                    OnClickfilter(categorie);
+                    OnClickfilter(categorie.name);
                     filterBtn.classList.add("filter-btn-active")
                 });
                 filterBar.appendChild(filterBtn)
@@ -164,7 +169,7 @@ fetch("http://localhost:5678/api/works")
                     const filteredWorks = allWorksList.filter(function (allWorksList) {
                         return allWorksList.category.name === categorie
                     });
-                    generateGalleryContent(filteredWorks, gallery)
+                    generateGalleryContent(filteredWorks, gallery);
                 }
             }
         }
@@ -177,43 +182,69 @@ fetch("http://localhost:5678/api/works")
 
 
 
-// Preview de l'image Uploadée
-const filePicture = document.getElementById("picture");
+// Récupération des données du formulaire
+const pictureFile = document.getElementById("picture");
 const filePreview = document.getElementById("preview");
 const fileInput = document.querySelector(".file-input")
 const submitBtn = document.querySelector(".modal-wrapper-form .modal-btn");
-const filePictureReader = new FileReader();
+const pictureFileReader = new FileReader();
 
-filePicture.addEventListener("change", function () {
-    if (filePicture.files && filePicture.files[0]) {
-        filePictureReader.onload = function (e) {
+// Preview de l'image Uploadée
+pictureFile.addEventListener("change", function () {
+    if (pictureFile.files && pictureFile.files[0]) {
+        pictureFileReader.onload = function (e) {
             filePreview.src = e.target.result;
             filePreview.style.display = null;
         };
-        fileInput.style.display = "none"
-        submitBtn.classList.remove("disabled")
-        filePictureReader.readAsDataURL(filePicture.files[0]);
-        filePictureReader.onloadend = console.log(filePictureReader)
+        fileInput.style.display = "none";
+        pictureFileReader.readAsDataURL(pictureFile.files[0]);
     };
 });
 
-// Récupération des données du formulaire
-const filePictureTitle = document.getElementById("picture-title");
-const fileCategory = document.getElementById("form-category");
+// Submit du formulaire
 const addWorkForm = document.getElementById("add-work-form");
+const pictureTitle = document.getElementById("picture-title");
+const pictureCategory = document.getElementById("picture-category");
+
+addWorkForm.addEventListener("change", (e) => {
+    if(pictureFile.files[0] != null && pictureTitle.value != ""){
+        submitBtn.classList.remove("disabled");
+    }
+    
+})
 
 addWorkForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    //Récupérer l'ID de catégorie
-    //pour chaque valeur de setCategoriesList vérifier si elle correspond
-    //à la valeur de fileCategory et renvoyer la valeur d'index
-
-    // Créer l'objet d'envoi POST
-    // let workToPost = {
-    //     "id": 0,
-    //     "title": filePictureTitle.value,
-    //     "imageUrl": "string"
-    //     "categoryId": "string",
-    //     "userId": 0
-    // }
+    const workToPostFormData = new FormData()
+    workToPostFormData.append("id", 0);
+    workToPostFormData.append("title", pictureTitle.value);
+    workToPostFormData.append("imageUrl", pictureFile.files[0]);
+    workToPostFormData.append("categoryId", 3);
+    workToPostFormData.append("userId", 0);
+    console.log(pictureCategory);
+    console.log(workToPostFormData);
+    
+    fetch("http://localhost:5678/api/works", {
+        method: 'POST',
+        headers: {
+            'accept': 'application/json',
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `${token}`
+        },
+        body: workToPostFormData
+    })
+    .then(response => {
+        if(!response.ok){
+            throw new Error("Erreur")
+        };
+        
+        return response.json()
+        
+    })
+    .then(result => {
+        console.log(result)
+    })
+    .catch((Error) => {
+        console.error(Error)
+    });
 });
