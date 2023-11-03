@@ -4,7 +4,7 @@ let filterBar = document.querySelector(".filters");
 let modal = document.querySelector(".modal");
 let modalWrapperEdit = document.querySelector(".modal-wrapper-edit");
 let modalWrapperForm = document.querySelector(".modal-wrapper-form");
-const token =  window.localStorage.getItem("token");
+const token = window.localStorage.getItem("token");
 
 function stopPropagation(e) {
     e.stopPropagation
@@ -42,7 +42,7 @@ fetch("http://localhost:5678/api/works")
         // Fonction de génération de contenu
         function generateGalleryContent(content, container) {
             gallery.innerHTML = " ";
-            for(let i = 0; i < content.length; i++){
+            for (let i = 0; i < content.length; i++) {
                 let fig = document.createElement("figure");
                 let figImg = document.createElement("img");
                 figImg.src = content[i].imageUrl;
@@ -62,7 +62,7 @@ fetch("http://localhost:5678/api/works")
             setCategoriesList.add(JSON.stringify(work.category))
         });
         const categories = Array.from(setCategoriesList).map(JSON.parse);
-        
+
         // Vérification du token
         if (token != undefined) {
             // Modification du bouton Login en Logout
@@ -115,7 +115,7 @@ fetch("http://localhost:5678/api/works")
             });
 
             //Catégories du formulaire
-            let categorySelection = document.querySelector("#form-category");
+            let categorySelection = document.querySelector("#picture-category");
             categories.forEach((categorie) => {
                 let option = document.createElement("option");
                 option.value = categorie.id;
@@ -207,10 +207,10 @@ const pictureTitle = document.getElementById("picture-title");
 const pictureCategory = document.getElementById("picture-category");
 
 addWorkForm.addEventListener("change", (e) => {
-    if(pictureFile.files[0] != null && pictureTitle.value != ""){
+    if (pictureFile.files[0] != null && pictureTitle.value != "") {
         submitBtn.classList.remove("disabled");
     }
-    
+
 })
 
 addWorkForm.addEventListener("submit", (e) => {
@@ -219,32 +219,30 @@ addWorkForm.addEventListener("submit", (e) => {
     workToPostFormData.append("id", 0);
     workToPostFormData.append("title", pictureTitle.value);
     workToPostFormData.append("imageUrl", pictureFile.files[0]);
-    workToPostFormData.append("categoryId", 3);
+    workToPostFormData.append("categoryId", pictureCategory.value);
     workToPostFormData.append("userId", 0);
-    console.log(pictureCategory);
-    console.log(workToPostFormData);
+    
     
     fetch("http://localhost:5678/api/works", {
         method: 'POST',
         headers: {
-            'accept': 'application/json',
             'Content-Type': 'multipart/form-data',
-            'Authorization': `${token}`
+            'Authorization': `Bearer ${token}`
         },
         body: workToPostFormData
     })
-    .then(response => {
-        if(!response.ok){
-            throw new Error("Erreur")
-        };
-        
-        return response.json()
-        
-    })
-    .then(result => {
-        console.log(result)
-    })
-    .catch((Error) => {
-        console.error(Error)
-    });
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Erreur")
+            };
+
+            return response.json()
+
+        })
+        .then(result => {
+            console.log(result)
+        })
+        .catch((Error) => {
+            console.error("Erreur")
+        });
 });
