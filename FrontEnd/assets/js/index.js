@@ -1,5 +1,6 @@
 
 const gallery = document.querySelector(".gallery");
+const galleryEdit = document.querySelector(".modal-wrapper-edit .edit-gallery");
 let filterBar = document.querySelector(".filters");
 let modal = document.querySelector(".modal");
 let modalWrapperEdit = document.querySelector(".modal-wrapper-edit");
@@ -17,6 +18,7 @@ function closeModal(e) {
     modal.style.display = "none";
     modalWrapperEdit.style.display = "none";
     modalWrapperForm.style.display = "none";
+    galleryEdit.innerHTML = '';
     resetPreviews()
 };
 function resetPreviews() {
@@ -28,7 +30,8 @@ function resetPreviews() {
     filePreview.style.display = "none";
     fileInput.style.display = "flex";
     submitBtn.classList.add("disabled");
-}
+};
+
 
 //Récupération des données de l'API
 fetch("http://localhost:5678/api/works")
@@ -44,6 +47,7 @@ fetch("http://localhost:5678/api/works")
     //Stockage de la réponse dans la variable allWorksList
     .then(result => {
         const allWorksList = result;
+        console.log(allWorksList)
         return allWorksList
     })
 
@@ -92,23 +96,40 @@ fetch("http://localhost:5678/api/works")
 
             //Ouverture  de la modale
             modifyWorksBtn.addEventListener("click", () => {
-                openModal(modalWrapperEdit)
-            });
+                openModal(modalWrapperEdit);
+                //Contenu de la modale
+                const galleryEditContent = allWorksList.map(allWorksList => allWorksList);
 
-            //Contenu de la modale
-            let galleryEditContent = allWorksList.map(allWorksList => allWorksList.imageUrl);
-            let galleryEdit = document.querySelector(".modal-wrapper-edit .edit-gallery");
-            galleryEditContent.forEach((image) => {
-                let editWork = document.createElement("div");
-                editWork.classList.add("work-edit");
-                let editImg = document.createElement("img");
-                let deleteBtn = document.createElement("button");
-                deleteBtn.classList.add("delete-btn");
-                deleteBtn.innerHTML = `<i class="fa-solid fa-trash-can" style="color: #ffffff;"></i>`;
-                editImg.src = image;
-                editWork.append(editImg, deleteBtn);
-                galleryEdit.appendChild(editWork)
+                galleryEditContent.forEach((work) => {
+                    let editWork = document.createElement("div");
+                    editWork.classList.add("work-edit");
+                    let editImg = document.createElement("img");
+                    let deleteBtn = document.createElement("button");
+                    deleteBtn.classList.add("delete-btn");
+                    deleteBtn.innerHTML = `<i class="fa-solid fa-trash-can" style="color: #ffffff;"></i>`;
+                    deleteBtn.addEventListener("click", () => {
+                        fetch("http://localhost:5678/api/works/" + work.id, {
+                            method: 'DELETE',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                            },
+                        })
+                            .then(response => response.text())
+                            .then(result => console.log(result))
+                            .catch(error => console.log('error delete', error));
+                    });
+                    editImg.src = work.imageUrl;
+                    editWork.append(editImg, deleteBtn);
+                    galleryEdit.appendChild(editWork)
+                });
             });
+            // Suppression des travaux
+            let deleteBtnList = document.querySelectorAll(".edit-gallery .delete-btn")
+            for (i = 0; i < deleteBtnList.length; i++) {
+                deleteBtnList[i]
+            }
+
+
 
             // Bouton d'envoi vers le formulaire d'ajout d'image
             let addWorkBtn = document.querySelector(".add-work-btn");
@@ -232,7 +253,6 @@ addWorkForm.addEventListener("submit", (e) => {
     e.preventDefault();
     const workToPostFormData = new FormData(addWorkForm)
 
-    console.log(workToPostFormData.get("image"), workToPostFormData.get("title"), workToPostFormData.get("category"));
     fetch("http://localhost:5678/api/works", {
         method: 'POST',
         headers: {
@@ -249,10 +269,14 @@ addWorkForm.addEventListener("submit", (e) => {
 
         })
         .then(result => {
+            const newWork = result;
+            console.log(newWork);
             closeModal();
+            allWorksList.push(newWork);
+            generateGalleryContent(allWorksList, gallery);
             console.log(result)
         })
-        .catch((Error) => {
-            console.error("Erreur")
+        .catch(Error => {
+            console.error("Erreur Post")
         });
 });
