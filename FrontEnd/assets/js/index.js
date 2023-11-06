@@ -17,8 +17,18 @@ function closeModal(e) {
     modal.style.display = "none";
     modalWrapperEdit.style.display = "none";
     modalWrapperForm.style.display = "none";
-
+    resetPreviews()
 };
+function resetPreviews() {
+    pictureFileReader.abort();
+    pictureFile.value = '';
+    pictureTitle.value = '';
+    pictureCategory.value = 1;
+    filePreview.src = "";
+    filePreview.style.display = "none";
+    fileInput.style.display = "flex";
+    submitBtn.classList.add("disabled");
+}
 
 //Récupération des données de l'API
 fetch("http://localhost:5678/api/works")
@@ -115,7 +125,7 @@ fetch("http://localhost:5678/api/works")
             });
 
             //Catégories du formulaire
-            let categorySelection = document.querySelector("#picture-category");
+            let categorySelection = document.getElementById("category");
             categories.forEach((categorie) => {
                 let option = document.createElement("option");
                 option.value = categorie.id;
@@ -180,10 +190,8 @@ fetch("http://localhost:5678/api/works")
         gallery.appendChild(galleryError)
     });
 
-
-
 // Récupération des données du formulaire
-const pictureFile = document.getElementById("picture");
+const pictureFile = document.getElementById("image");
 const filePreview = document.getElementById("preview");
 const fileInput = document.querySelector(".file-input")
 const submitBtn = document.querySelector(".modal-wrapper-form .modal-btn");
@@ -191,21 +199,28 @@ const pictureFileReader = new FileReader();
 
 // Preview de l'image Uploadée
 pictureFile.addEventListener("change", function () {
-    if (pictureFile.files && pictureFile.files[0]) {
-        pictureFileReader.onload = function (e) {
-            filePreview.src = e.target.result;
-            filePreview.style.display = null;
+    const selectedFile = pictureFile.files[0];
+    const maxSize = 4 * 1024 * 1024;
+    if (selectedFile && selectedFile.size > maxSize) {
+        alert('Le fichier est trop volumineux. Veuillez sélectionner un fichier de moins de 4MB.');
+        pictureFile.value = '';
+    } else {
+        if (pictureFile.files && selectedFile) {
+            pictureFileReader.onload = function (e) {
+                filePreview.src = e.target.result;
+                filePreview.style.display = null;
+            };
+            fileInput.style.display = "none";
+            pictureFileReader.readAsDataURL(selectedFile);
         };
-        fileInput.style.display = "none";
-        pictureFileReader.readAsDataURL(pictureFile.files[0]);
-    };
+    }
+    return pictureFileReader
 });
 
 // Submit du formulaire
 const addWorkForm = document.getElementById("add-work-form");
-const pictureTitle = document.getElementById("picture-title");
-const pictureCategory = document.getElementById("picture-category");
-
+const pictureTitle = document.getElementById("title");
+const pictureCategory = document.getElementById("category");
 addWorkForm.addEventListener("change", (e) => {
     if (pictureFile.files[0] != null && pictureTitle.value != "") {
         submitBtn.classList.remove("disabled");
@@ -215,21 +230,15 @@ addWorkForm.addEventListener("change", (e) => {
 
 addWorkForm.addEventListener("submit", (e) => {
     e.preventDefault();
-    const workToPostFormData = new FormData()
-    workToPostFormData.append("id", 0);
-    workToPostFormData.append("title", pictureTitle.value);
-    workToPostFormData.append("imageUrl", pictureFile.files[0]);
-    workToPostFormData.append("categoryId", pictureCategory.value);
-    workToPostFormData.append("userId", 0);
-    
-    
+    const workToPostFormData = new FormData(addWorkForm)
+
+    console.log(workToPostFormData.get("image"), workToPostFormData.get("title"), workToPostFormData.get("category"));
     fetch("http://localhost:5678/api/works", {
         method: 'POST',
         headers: {
-            'Content-Type': 'multipart/form-data',
-            'Authorization': `Bearer ${token}`
+            'Authorization': `Bearer ${token}`,
         },
-        body: workToPostFormData
+        body: workToPostFormData,
     })
         .then(response => {
             if (!response.ok) {
@@ -240,6 +249,7 @@ addWorkForm.addEventListener("submit", (e) => {
 
         })
         .then(result => {
+            closeModal();
             console.log(result)
         })
         .catch((Error) => {
