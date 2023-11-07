@@ -136,6 +136,8 @@ fetch("http://localhost:5678/api/works")
                                 deleteBtn.parentElement.remove();
                                 const figureToDelete = document.querySelector(`[data-work-id="${work.id}"]`);
                                 figureToDelete.remove();
+                                const indexToDelete = allWorksList.findIndex(indexwork => indexwork.id === work.id);
+                                allWorksList.splice(indexToDelete, 1)
                             })
                             .catch(error => console.log('error delete', error));
                     });
@@ -157,19 +159,6 @@ fetch("http://localhost:5678/api/works")
             leftArrow.addEventListener("click", () => {
                 modalWrapperForm.style.display = "none";
                 modalWrapperEdit.style.display = null;
-            });
-
-            //Catégories du formulaire
-            let categorySelection = document.getElementById("category");
-            let optionZero = document.createElement("option");
-            optionZero.value = 0;
-            optionZero.innerText = '';
-            categorySelection.appendChild(optionZero);
-            categories.forEach((categorie) => {
-                let option = document.createElement("option");
-                option.value = categorie.id;
-                option.innerText = categorie.name;
-                categorySelection.appendChild(option)
             });
 
             // Preview de l'image Uploadée
