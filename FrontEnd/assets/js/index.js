@@ -6,6 +6,11 @@ let modal = document.querySelector(".modal");
 let modalWrapperEdit = document.querySelector(".modal-wrapper-edit");
 let modalWrapperForm = document.querySelector(".modal-wrapper-form");
 const token = window.localStorage.getItem("token");
+const pictureFileReader = new FileReader();
+const pictureFile = document.getElementById("image");
+const pictureTitle = document.getElementById("title");
+const pictureCategory = document.getElementById("category");
+const filePreview = document.getElementById("preview");
 
 function stopPropagation(e) {
     e.stopPropagation
@@ -25,7 +30,7 @@ function resetPreviews() {
     pictureFileReader.abort();
     pictureFile.value = '';
     pictureTitle.value = '';
-    pictureCategory.value = 1;
+    pictureCategory.value = 0;
     filePreview.src = "";
     filePreview.style.display = "none";
     fileInput.style.display = "flex";
@@ -33,6 +38,7 @@ function resetPreviews() {
 };
 function createFigure(content, container) {
     let fig = document.createElement("figure");
+    fig.setAttribute("data-work-id", content.id);
     let figImg = document.createElement("img");
     figImg.src = content.imageUrl;
     figImg.alt = content.title;
@@ -44,7 +50,7 @@ function createFigure(content, container) {
 function generateGalleryContent(content, container) {
     gallery.innerHTML = " ";
     for (work of content) {
-        createFigure(work, container)
+        createFigure(work, container);
     };
 };
 
@@ -88,6 +94,14 @@ fetch("http://localhost:5678/api/works")
                 window.location.href = "./index.html"
             });
 
+            //Bandeau d'Edition
+            const header = document.querySelector("header");
+            const body = document.querySelector("body");
+            const editBanner = document.createElement("div");
+            editBanner.classList.add("edit-banner");
+            editBanner.innerHTML = `<i class="fa-regular fa-pen-to-square"></i>  Mode édition`;
+            body.insertBefore(editBanner, header);
+
             // Bouton de modification
             const modifyWorksBtn = document.createElement("p");
             modifyWorksBtn.innerHTML = `<i class="fa-regular fa-pen-to-square"></i> modifier`;
@@ -107,7 +121,7 @@ fetch("http://localhost:5678/api/works")
                     let deleteBtn = document.createElement("button");
                     deleteBtn.classList.add("delete-btn");
                     deleteBtn.innerHTML = `<i class="fa-solid fa-trash-can" style="color: #ffffff;"></i>`;
-                    deleteBtn.addEventListener("click", () => {
+                    deleteBtn.addEventListener("click", (e) => {
                         fetch("http://localhost:5678/api/works/" + work.id, {
                             method: 'DELETE',
                             headers: {
@@ -118,6 +132,15 @@ fetch("http://localhost:5678/api/works")
                                 if (!response.ok) {
                                     throw new Error(response.status)
                                 };
+                                deleteBtn.parentElement.remove();
+                                let figuresList = document.querySelectorAll(".gallery figure");
+                                console.log(work.id);
+                                for(let i = 0; 0 < figuresList.length; i++){
+                                    console.log(figuresList[i].dataset.workId)
+                                    if(figuresList[i].dataset.workId === work.id){
+                                        figuresList[i].remove();
+                                    }
+                                }
                             })
                             .catch(error => console.log('error delete', error));
                     });
@@ -143,11 +166,77 @@ fetch("http://localhost:5678/api/works")
 
             //Catégories du formulaire
             let categorySelection = document.getElementById("category");
+            let optionZero = document.createElement("option");
+            optionZero.value = 0;
+            optionZero.innerText = '';
+            categorySelection.appendChild(optionZero);
             categories.forEach((categorie) => {
                 let option = document.createElement("option");
                 option.value = categorie.id;
                 option.innerText = categorie.name;
                 categorySelection.appendChild(option)
+            });
+
+
+            // Récupération des données du formulaire
+            
+            const fileInput = document.querySelector(".file-input")
+            const submitBtn = document.querySelector(".modal-wrapper-form .modal-btn");
+            
+
+            // Preview de l'image Uploadée
+            pictureFile.addEventListener("change", function () {
+                const selectedFile = pictureFile.files[0];
+                const maxSize = 4 * 1024 * 1024;
+                if (selectedFile && selectedFile.size > maxSize) {
+                    alert('Le fichier est trop volumineux. Veuillez sélectionner un fichier de moins de 4MB.');
+                    pictureFile.value = '';
+                } else {
+                    if (pictureFile.files && selectedFile) {
+                        pictureFileReader.onload = function (e) {
+                            filePreview.src = e.target.result;
+                            filePreview.style.display = null;
+                        };
+                        fileInput.style.display = "none";
+                        pictureFileReader.readAsDataURL(selectedFile);
+                    };
+                }
+            });
+
+            // Submit du formulaire
+            const addWorkForm = document.getElementById("add-work-form");
+            
+            addWorkForm.addEventListener("change", (e) => {
+                if (pictureFile.files[0] != null && pictureTitle.value != "" && pictureCategory.value != 0) {
+                    submitBtn.classList.remove("disabled")
+                } else {
+                    submitBtn.classList.add("disabled")
+                }
+            })
+
+            addWorkForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+                const workToPostFormData = new FormData(addWorkForm)
+
+                fetch("http://localhost:5678/api/works", {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                    },
+                    body: workToPostFormData,
+                })
+                    .then(response => {
+                        return response.json()
+                    })
+                    .then(result => {
+                        const newWork = result;
+                        createFigure(newWork, gallery);
+                        allWorksList.push(newWork);
+                        closeModal();
+                    })
+                    .catch(Error => {
+                        console.error("Erreur Post")
+                    });
             });
 
             // Fermeture de la modale
@@ -200,6 +289,7 @@ fetch("http://localhost:5678/api/works")
                 }
             }
         }
+        return allWorksList
     })
     .catch((error) => {
         const galleryError = document.createElement("p");
@@ -207,62 +297,3 @@ fetch("http://localhost:5678/api/works")
         gallery.appendChild(galleryError)
     });
 
-// Récupération des données du formulaire
-const pictureFile = document.getElementById("image");
-const filePreview = document.getElementById("preview");
-const fileInput = document.querySelector(".file-input")
-const submitBtn = document.querySelector(".modal-wrapper-form .modal-btn");
-const pictureFileReader = new FileReader();
-
-// Preview de l'image Uploadée
-pictureFile.addEventListener("change", function () {
-    const selectedFile = pictureFile.files[0];
-    const maxSize = 4 * 1024 * 1024;
-    if (selectedFile && selectedFile.size > maxSize) {
-        alert('Le fichier est trop volumineux. Veuillez sélectionner un fichier de moins de 4MB.');
-        pictureFile.value = '';
-    } else {
-        if (pictureFile.files && selectedFile) {
-            pictureFileReader.onload = function (e) {
-                filePreview.src = e.target.result;
-                filePreview.style.display = null;
-            };
-            fileInput.style.display = "none";
-            pictureFileReader.readAsDataURL(selectedFile);
-        };
-    }
-});
-
-// Submit du formulaire
-const addWorkForm = document.getElementById("add-work-form");
-const pictureTitle = document.getElementById("title");
-const pictureCategory = document.getElementById("category");
-addWorkForm.addEventListener("change", (e) => {
-    if (pictureFile.files[0] != null && pictureTitle.value != "") {
-        submitBtn.classList.remove("disabled");
-    }
-})
-
-addWorkForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const workToPostFormData = new FormData(addWorkForm)
-
-    fetch("http://localhost:5678/api/works", {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${token}`,
-        },
-        body: workToPostFormData,
-    })
-        .then(response => {
-            return response.json()
-        })
-        .then(result => {
-            const newWork = result;
-            createFigure(newWork, gallery);
-            closeModal();
-        })
-        .catch(Error => {
-            console.error("Erreur Post")
-        });
-});

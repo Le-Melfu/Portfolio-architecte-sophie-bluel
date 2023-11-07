@@ -30,6 +30,6 @@ logInForm.addEventListener("submit", (event) => {
     })
     .catch((Error) => {
         const errorMessage = document.querySelector(".login-block .err-message");
-        errorMessage.innerText = "Le mot de passe ou le nom d'utilisateur est incorrect";
+        errorMessage.innerText = "Erreur dans l’identifiant ou le mot de passe";
     });
 });
