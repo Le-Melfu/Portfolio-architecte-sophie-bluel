@@ -1,16 +1,17 @@
-
 const gallery = document.querySelector(".gallery");
 const galleryEdit = document.querySelector(".modal-wrapper-edit .edit-gallery");
-let filterBar = document.querySelector(".filters");
-let modal = document.querySelector(".modal");
-let modalWrapperEdit = document.querySelector(".modal-wrapper-edit");
-let modalWrapperForm = document.querySelector(".modal-wrapper-form");
+const filterBar = document.querySelector(".filters");
+const modal = document.querySelector(".modal");
+const modalWrapperEdit = document.querySelector(".modal-wrapper-edit");
+const modalWrapperForm = document.querySelector(".modal-wrapper-form");
 const token = window.localStorage.getItem("token");
 const pictureFileReader = new FileReader();
 const pictureFile = document.getElementById("image");
 const pictureTitle = document.getElementById("title");
 const pictureCategory = document.getElementById("category");
 const filePreview = document.getElementById("preview");
+const fileInput = document.querySelector(".file-input")
+const submitBtn = document.querySelector(".modal-wrapper-form .modal-btn");
 
 function stopPropagation(e) {
     e.stopPropagation
@@ -48,7 +49,7 @@ function createFigure(content, container) {
     container.appendChild(fig)
 }
 function generateGalleryContent(content, container) {
-    gallery.innerHTML = " ";
+    container.innerHTML = " ";
     for (work of content) {
         createFigure(work, container);
     };
@@ -133,14 +134,8 @@ fetch("http://localhost:5678/api/works")
                                     throw new Error(response.status)
                                 };
                                 deleteBtn.parentElement.remove();
-                                let figuresList = document.querySelectorAll(".gallery figure");
-                                console.log(work.id);
-                                for(let i = 0; 0 < figuresList.length; i++){
-                                    console.log(figuresList[i].dataset.workId)
-                                    if(figuresList[i].dataset.workId === work.id){
-                                        figuresList[i].remove();
-                                    }
-                                }
+                                const figureToDelete = document.querySelector(`[data-work-id="${work.id}"]`);
+                                figureToDelete.remove();
                             })
                             .catch(error => console.log('error delete', error));
                     });
@@ -176,13 +171,6 @@ fetch("http://localhost:5678/api/works")
                 option.innerText = categorie.name;
                 categorySelection.appendChild(option)
             });
-
-
-            // Récupération des données du formulaire
-            
-            const fileInput = document.querySelector(".file-input")
-            const submitBtn = document.querySelector(".modal-wrapper-form .modal-btn");
-            
 
             // Preview de l'image Uploadée
             pictureFile.addEventListener("change", function () {
