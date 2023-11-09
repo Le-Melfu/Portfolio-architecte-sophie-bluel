@@ -1,3 +1,4 @@
+// Queries globales
 const gallery = document.querySelector(".gallery");
 const galleryEdit = document.querySelector(".modal-wrapper-edit .edit-gallery");
 const filterBar = document.querySelector(".filters");
@@ -12,9 +13,8 @@ const pictureCategory = document.getElementById("category");
 const filePreview = document.getElementById("preview");
 const fileInput = document.querySelector(".file-input")
 const submitBtn = document.querySelector(".modal-wrapper-form .modal-btn");
-function stopPropagation(e) {
-    e.stopPropagation
-};
+
+// Fonctions
 function openModal(e) {
     modal.style.display = null;
     modalWrapperEdit.style.display = null;
@@ -26,9 +26,9 @@ function closeModal(e) {
     galleryEdit.innerHTML = '';
     resetPreviews()
 };
-function modalGen() {
-
-}
+function stopPropagation(e) {
+    e.stopPropagation
+};
 function resetPreviews() {
     pictureFileReader.abort();
     pictureFile.value = '';
@@ -52,8 +52,8 @@ function createFigure(content, container) {
 }
 function generateGalleryContent(content, container) {
     container.innerHTML = " ";
-    for (work of content) {
-        createFigure(work, container);
+    for (element of content) {
+        createFigure(element, container);
     };
 };
 
@@ -87,20 +87,6 @@ fetch("http://localhost:5678/api/works")
         });
         const categories = Array.from(setCategoriesList).map(JSON.parse);
 
-        // Categories pour le formulaire
-        fetch("http://localhost:5678/api/categories")
-            .then(response => response.json())
-            .then(result => {
-                const categoriesForm = result;
-                categoriesForm.forEach(categorie => {
-                    const option = document.createElement("option");
-                    option.value = categorie.id;
-                    option.innerHTML = categorie.name;
-                    pictureCategory.appendChild(option)
-                });
-            })
-            .catch(error => console.log('error', error));
-        
         // Vérification du token
         if (token != undefined) {
             // Modification du bouton Login en Logout
@@ -129,11 +115,25 @@ fetch("http://localhost:5678/api/works")
             const portfolioHeader = document.querySelector(".portfolio__header");
             portfolioHeader.appendChild(modifyWorksBtn)
 
+            // Categories pour le formulaire
+            fetch("http://localhost:5678/api/categories")
+                .then(response => response.json())
+                .then(result => {
+                    const categoriesForm = result;
+                    categoriesForm.forEach(categorie => {
+                        const option = document.createElement("option");
+                        option.value = categorie.id;
+                        option.innerHTML = categorie.name;
+                        pictureCategory.appendChild(option)
+                    });
+                })
+                .catch(error => console.log('error', error));
+
             //Ouverture  de la modale
             modifyWorksBtn.addEventListener("click", () => {
-                openModal(modalWrapperEdit);
+                openModal();
                 //Contenu de la modale
-                const galleryEditContent = allWorksList.map(allWorksList => allWorksList);
+                const galleryEditContent = allWorksList;
 
                 galleryEditContent.forEach((work) => {
                     let editWork = document.createElement("div");
@@ -203,9 +203,10 @@ fetch("http://localhost:5678/api/works")
                 }
             });
 
-            // Submit du formulaire
+            // Récupération du formulaire
             const addWorkForm = document.getElementById("add-work-form");
 
+            // Validation des champs du formulaire
             addWorkForm.addEventListener("change", (e) => {
                 if (pictureFile.files[0] != null && pictureTitle.value != "" && pictureCategory.value != 0) {
                     submitBtn.classList.remove("disabled")
@@ -289,7 +290,6 @@ fetch("http://localhost:5678/api/works")
                 }
             }
         }
-        return allWorksList
     })
     .catch((error) => {
         const galleryError = document.createElement("p");

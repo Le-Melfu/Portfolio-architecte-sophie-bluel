@@ -1,11 +1,12 @@
 //Page de Login
 const logInForm = document.querySelector(".login-block form");
-console.log(logInForm);
+const userEmailInput = document.querySelector("#email");
+const userPasswordInput = document.querySelector("#password");
 
 logInForm.addEventListener("submit", (event) => {
+    let userEmail = userEmailInput.value;
+    let userPassword = userPasswordInput.value;
     event.preventDefault();
-    let userEmail = document.querySelector("#email").value;
-    let userPassword = document.querySelector("#password").value;
     let userAccount = {
         "email": userEmail,
         "password": userPassword
@@ -19,7 +20,7 @@ logInForm.addEventListener("submit", (event) => {
     })
     .then(response => {
         if(!response.ok){
-            throw new Error("incorrect")
+            throw new Error()
         };
         return response.json()
     })
@@ -31,5 +32,7 @@ logInForm.addEventListener("submit", (event) => {
     .catch((Error) => {
         const errorMessage = document.querySelector(".login-block .err-message");
         errorMessage.innerText = "Erreur dans l’identifiant ou le mot de passe";
+        userEmailInput.value = "";
+        userPasswordInput.value = "";
     });
 });
