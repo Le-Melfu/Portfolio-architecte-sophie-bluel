@@ -138,11 +138,20 @@ table {
 body {
 	display: flex;
 	flex-direction: column;
-	height: 100vh;
-	max-width: 1140px;
+	justify-content: center;
+	align-items: center;
 	margin: auto;
 	font-family: 'Work Sans';
 	font-size: 14px;
+	width: 100%;
+}
+
+.main-container {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	width: 100%;
+	max-width: 1140px;
 }
 
 .edit-banner {
@@ -158,6 +167,7 @@ body {
 	font-size: 16px;
 	font-weight: 400;
 	text-align: center;
+	cursor: pointer;
 }
 
 .edit-banner i {
@@ -276,6 +286,7 @@ section {
 .modal-wrapper-edit .edit-gallery img {
 	width: 100px;
 	height: 134px;
+	object-fit: cover;
 }
 
 .modal-wrapper-edit .edit-gallery .work-edit {
@@ -315,6 +326,10 @@ section {
 	font-size: 14px;
 	font-weight: 700;
 	flex-shrink: 0;
+}
+
+.modal-wrapper .modal-btn:active {
+	background: #267e6e;
 }
 
 .modal-wrapper .disabled {
@@ -624,6 +639,11 @@ li:hover {
 	background: #1D6154;
 	margin-top: 10px;
 	margin-bottom: 28px;
+	cursor: pointer;
+}
+
+.login-block form button:active {
+	background: #267e6e;
 }
 
 .login-block a {

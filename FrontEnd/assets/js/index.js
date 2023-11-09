@@ -12,7 +12,6 @@ const pictureCategory = document.getElementById("category");
 const filePreview = document.getElementById("preview");
 const fileInput = document.querySelector(".file-input")
 const submitBtn = document.querySelector(".modal-wrapper-form .modal-btn");
-
 function stopPropagation(e) {
     e.stopPropagation
 };
@@ -27,6 +26,9 @@ function closeModal(e) {
     galleryEdit.innerHTML = '';
     resetPreviews()
 };
+function modalGen() {
+
+}
 function resetPreviews() {
     pictureFileReader.abort();
     pictureFile.value = '';
@@ -70,20 +72,35 @@ fetch("http://localhost:5678/api/works")
     //Stockage de la réponse dans la variable allWorksList
     .then(result => {
         const allWorksList = result;
-        console.log(allWorksList)
         return allWorksList
     })
 
     //Génération des boutons de filtres
     .then((allWorksList) => {
+
         generateGalleryContent(allWorksList, gallery);
-        //Récupération des Catégories
+
+        // Récupération des Catégories
         let setCategoriesList = new Set();
         allWorksList.forEach(work => {
             setCategoriesList.add(JSON.stringify(work.category))
         });
         const categories = Array.from(setCategoriesList).map(JSON.parse);
 
+        // Categories pour le formulaire
+        fetch("http://localhost:5678/api/categories")
+            .then(response => response.json())
+            .then(result => {
+                const categoriesForm = result;
+                categoriesForm.forEach(categorie => {
+                    const option = document.createElement("option");
+                    option.value = categorie.id;
+                    option.innerHTML = categorie.name;
+                    pictureCategory.appendChild(option)
+                });
+            })
+            .catch(error => console.log('error', error));
+        
         // Vérification du token
         if (token != undefined) {
             // Modification du bouton Login en Logout
@@ -96,12 +113,15 @@ fetch("http://localhost:5678/api/works")
             });
 
             //Bandeau d'Edition
-            const header = document.querySelector("header");
+            const mainContainer = document.querySelector(".main-container");
             const body = document.querySelector("body");
             const editBanner = document.createElement("div");
             editBanner.classList.add("edit-banner");
             editBanner.innerHTML = `<i class="fa-regular fa-pen-to-square"></i>  Mode édition`;
-            body.insertBefore(editBanner, header);
+            body.insertBefore(editBanner, mainContainer);
+            editBanner.addEventListener("click", () => {
+                modifyWorksBtn.click();
+            })
 
             // Bouton de modification
             const modifyWorksBtn = document.createElement("p");
@@ -137,7 +157,10 @@ fetch("http://localhost:5678/api/works")
                                 const figureToDelete = document.querySelector(`[data-work-id="${work.id}"]`);
                                 figureToDelete.remove();
                                 const indexToDelete = allWorksList.findIndex(indexwork => indexwork.id === work.id);
-                                allWorksList.splice(indexToDelete, 1)
+                                allWorksList.splice(indexToDelete, 1);
+                            })
+                            .then(() => {
+                                closeModal()
                             })
                             .catch(error => console.log('error delete', error));
                     });
@@ -182,7 +205,7 @@ fetch("http://localhost:5678/api/works")
 
             // Submit du formulaire
             const addWorkForm = document.getElementById("add-work-form");
-            
+
             addWorkForm.addEventListener("change", (e) => {
                 if (pictureFile.files[0] != null && pictureTitle.value != "" && pictureCategory.value != 0) {
                     submitBtn.classList.remove("disabled")
